@@ -1,0 +1,378 @@
+/* Enrich Profile Section */
+.enrich-profile-section {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.enrich-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.enrich-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.enrich-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  background: linear-gradient(45deg, #c4b5fd, #f9a8d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.enrich-content {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(196, 181, 253, 0.2);
+}
+
+.enrich-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.enrich-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(196, 181, 253, 0.1);
+  transition: all 0.2s ease;
+}
+
+.benefit-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.benefit-item.completed {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.benefit-item.completed:hover {
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.benefit-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.benefit-text {
+  color: #f1f5f9;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.enrich-note {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #cbd5e1;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+/* FIXED CHAT NOW BUTTON */
+.chat-now-button {
+  width: 100% !important;
+  padding: 1.25rem 2rem !important;
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 25%, #c084fc 50%, #7c3aed 75%, #6d28d9 100%) !important;
+  border: none !important;
+  border-radius: 1rem !important;
+  color: white !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4), 0 4px 12px rgba(168, 85, 247, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  outline: none !important;
+}
+
+.chat-now-button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+  transition: left 0.5s !important;
+}
+
+.chat-now-button:hover::before {
+  left: 100% !important;
+}
+
+.chat-now-button:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 25%, #a855f7 50%, #c084fc 75%, #d946ef 100%) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+  box-shadow: 0 12px 35px rgba(139, 92, 246, 0.5), 0 6px 18px rgba(168, 85, 247, 0.4) !important;
+}
+
+.chat-now-button:active {
+  transform: translateY(-1px) scale(1.01) !important;
+  transition: all 0.1s ease !important;
+}
+
+.button-icon {
+  font-size: 1.2rem !important;
+}
+
+/* Enrichment Completed State */
+.enrichment-completed {
+  text-align: center;
+}
+
+.completed-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.completed-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #22c55e;
+  margin-bottom: 1rem;
+}
+
+.completed-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.completed-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Success Modal */
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-modal-content {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e40af 100%);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  max-width: 500px;
+  width: 90%;
+  margin: 1rem;
+  border: 1px solid rgba(196, 181, 253, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  animation: slideInUp 0.4s ease;
+}
+
+.success-modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.success-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.success-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #22c55e;
+  margin: 0;
+}
+
+.success-modal-body {
+  text-align: center;
+}
+
+.success-message {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.success-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.feature-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.feature-text {
+  color: #f1f5f9;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.success-progress {
+  margin-bottom: 2rem;
+}
+
+.progress-bar-success {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill-success {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 3px;
+  animation: progressFill 3s ease forwards;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  margin: 0;
+  font-style: italic;
+}
+
+.success-close-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border: none;
+  border-radius: 0.75rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.success-close-button:hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .enrich-profile-section {
+    padding: 1.5rem;
+  }
+  
+  .enrich-content {
+    padding: 1.5rem;
+  }
+  
+  .enrich-title {
+    font-size: 1.5rem;
+  }
+  
+  .enrich-description {
+    font-size: 1rem;
+  }
+  
+  .benefit-item {
+    padding: 0.75rem;
+  }
+  
+  .benefit-text {
+    font-size: 0.9rem;
+  }
+  
+  .chat-now-button {
+    font-size: 1.1rem !important;
+    padding: 1rem 1.5rem !important;
+  }
+
+  .success-modal-content {
+    padding: 2rem;
+    margin: 0.5rem;
+  }
+
+  .success-title {
+    font-size: 1.5rem;
+  }
+
+  .success-message {
+    font-size: 1rem;
+  }
+}

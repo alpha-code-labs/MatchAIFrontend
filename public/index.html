@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<!-- PWA Theme and App Configuration -->
+<meta name="theme-color" content="#7c3aed" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Match.AI" />
+<meta name="mobile-web-app-capable" content="yes" />
+<!-- App Description -->
+<meta
+name="description"
+content="Match.AI - AI-powered dating app that finds your perfect match based on deep compatibility, not just photos. Stop swiping, start matching."
+/>
+<!-- Open Graph Meta Tags for Social Sharing -->
+<meta property="og:title" content="Match.AI - Find Your Perfect Match" />
+<meta property="og:description" content="AI-powered dating app that finds your perfect match based on deep compatibility" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="%PUBLIC_URL%/logo512.png" />
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Match.AI - Find Your Perfect Match" />
+<meta name="twitter:description" content="AI-powered dating app that finds your perfect match" />
+<meta name="twitter:image" content="%PUBLIC_URL%/logo512.png" />
+<!-- Apple Touch Icons for iOS -->
+<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+<link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/logo192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />
+<!-- Manifest for PWA -->
+<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+<!-- Microsoft Tiles for Windows -->
+<meta name="msapplication-TileColor" content="#7c3aed" />
+<meta name="msapplication-TileImage" content="%PUBLIC_URL%/logo192.png" />
+<!-- Preload Critical Resources -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- SEO Keywords -->
+<meta name="keywords" content="dating app, AI matching, personality compatibility, relationships, love, dating" />
+<meta name="author" content="Match.AI Team" />
+<!-- App Title -->
+<title>Match.AI - Find Your Perfect Match</title>
+<!-- Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('%PUBLIC_URL%/sw.js')
+ .then((registration) => {
+console.log('✅ Service Worker registered successfully:', registration);
+ })
+ .catch((error) => {
+console.log('❌ Service Worker registration failed:', error);
+ });
+ });
+ }
+</script>
+</head>
+<body>
+<noscript>
+<div style="
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ height: 100vh;
+ background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+ color: white;
+ font-family: system-ui, -apple-system, sans-serif;
+ text-align: center;
+ padding: 20px;
+ ">
+<div>
+<h1 style="margin-bottom: 10px;">💜 Match.AI</h1>
+<p>You need to enable JavaScript to run this app.</p>
+<p style="font-size: 14px; opacity: 0.8;">Please enable JavaScript in your browser settings and refresh the page.</p>
+</div>
+</div>
+</noscript>
+<div id="root"></div>
+</body>
+</html>
