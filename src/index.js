@@ -29,20 +29,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Handle PWA install prompt (fallback for browsers that don't support beforeinstallprompt)
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  console.log('📱 beforeinstallprompt event fired');
-  e.preventDefault();
-  deferredPrompt = e;
-});
-
-// Handle successful PWA installation
-window.addEventListener('appinstalled', () => {
-  console.log('✅ PWA was installed successfully');
-  deferredPrompt = null;
-});
-
 // Handle online/offline status for PWA
 window.addEventListener('online', () => {
   console.log('🌐 App is online');
