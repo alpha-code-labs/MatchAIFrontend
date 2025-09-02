@@ -222,6 +222,14 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
     return () => window.removeEventListener('resize', detectDevice);
   }, []);
 
+  // Check for globally captured deferred prompt on component mount
+  useEffect(() => {
+    if (window.deferredPrompt && !deferredPrompt) {
+      console.log('📱 Dashboard: Found globally captured deferred prompt');
+      setDeferredPrompt(window.deferredPrompt);
+    }
+  }, [deferredPrompt]);
+
   // PWA beforeinstallprompt event listener
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
