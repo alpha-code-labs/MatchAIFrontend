@@ -15,7 +15,7 @@ const firebaseConfig = {
 // Debug log - Remove this after fixing
 console.log('Firebase Config:', firebaseConfig);
 
-// Initialize Firebase
+// Initialize Firebase completely
 const app = initializeApp(firebaseConfig);
 
 // Initialize Realtime Database only
