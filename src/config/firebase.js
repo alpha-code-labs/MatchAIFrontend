@@ -12,7 +12,10 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase properly
+// Debug log - Remove this after fixing
+console.log('Firebase Config:', firebaseConfig);
+
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Initialize Realtime Database only
