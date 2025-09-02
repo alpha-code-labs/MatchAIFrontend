@@ -3,11 +3,19 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import AutoLogin from './components/AutoLogin';
 import './App.css';
-
 function App() {
   
   // PWA-specific setup
   useEffect(() => {
+    // Handle PWA install prompt capture
+    const handleBeforeInstallPrompt = (e) => {
+      console.log('📱 beforeinstallprompt event captured globally in App.js');
+      e.preventDefault();
+      window.deferredPrompt = e;
+    };
+    
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    
     // Handle PWA display mode
     const checkDisplayMode = () => {
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -22,16 +30,13 @@ function App() {
         document.body.classList.add('browser-mode');
       }
     };
-
     // Check display mode on load
     checkDisplayMode();
-
     // Handle iOS PWA status bar
     if (window.navigator.standalone) {
       console.log('📱 Running as iOS PWA');
       document.body.classList.add('ios-pwa');
     }
-
     // Handle PWA theme changes
     const updateThemeColor = (color) => {
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
@@ -39,10 +44,8 @@ function App() {
         metaThemeColor.setAttribute('content', color);
       }
     };
-
     // Set initial theme color
     updateThemeColor('#7c3aed');
-
     // Handle visibility changes for PWA
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -51,15 +54,13 @@ function App() {
         console.log('📱 PWA is in foreground');
       }
     };
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
     // Cleanup
     return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
-
   // Handle PWA keyboard shortcuts (optional)
   useEffect(() => {
     const handleKeyboardShortcuts = (e) => {
@@ -69,14 +70,11 @@ function App() {
         // You can dispatch custom events here for navigation
       }
     };
-
     window.addEventListener('keydown', handleKeyboardShortcuts);
-
     return () => {
       window.removeEventListener('keydown', handleKeyboardShortcuts);
     };
   }, []);
-
   return (
     <div className="App">
     <div id="chat-portal-root"></div>
@@ -92,5 +90,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
