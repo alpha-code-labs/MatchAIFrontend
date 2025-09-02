@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 // Debug log - Remove this after fixing
-console.log('Firebase Config:', firebaseConfig);
+// console.log('Firebase Config:', firebaseConfig);
 
 // Initialize Firebase completely
 const app = initializeApp(firebaseConfig);
