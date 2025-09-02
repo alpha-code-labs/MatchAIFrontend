@@ -780,6 +780,45 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
         )}
       </header>
 
+      {/* Debug Panel - Add this right after the header */}
+      {deviceInfo.isMobile && (
+        <div style={{
+          position: 'fixed',
+          top: '70px',
+          right: '10px',
+          background: 'rgba(0, 0, 0, 0.8)',
+          color: '#00ff00',
+          padding: '10px',
+          borderRadius: '8px',
+          fontSize: '12px',
+          fontFamily: 'monospace',
+          zIndex: 9999,
+          maxWidth: '300px'
+        }}>
+          <div style={{ marginBottom: '5px', color: '#ffff00', fontWeight: 'bold' }}>
+            🐛 PWA Debug Info
+          </div>
+          <div>Tour Done: {currentUserProfile?.hasSeenDashboardTour ? '✅' : '❌'}</div>
+          <div>PWA Installed: {currentUserProfile?.isPWAInstalled ? '✅' : '❌'}</div>
+          <div>Prompt Shown: {currentUserProfile?.pwaInstallPromptShown ? '✅' : '❌'}</div>
+          <div>Is Mobile: {deviceInfo.isMobile ? '✅' : '❌'}</div>
+          <div>Deferred Prompt: {deferredPrompt ? '✅ EXISTS' : '❌ NULL'}</div>
+          <div>Show Prompt State: {showPWAPrompt ? '✅ SHOWING' : '❌'}</div>
+          <div style={{ marginTop: '5px', fontSize: '10px', color: '#888' }}>
+            Should Trigger: {
+              currentUserProfile?.hasSeenDashboardTour &&
+              !currentUserProfile?.isPWAInstalled &&
+              !currentUserProfile?.pwaInstallPromptShown &&
+              deviceInfo.isMobile &&
+              deferredPrompt ? '✅ YES' : '❌ NO'
+            }
+          </div>
+          <div style={{ marginTop: '5px', fontSize: '10px', color: '#ff9900' }}>
+            Time: {new Date().toLocaleTimeString()}
+          </div>
+        </div>
+      )}
+
       {/* NEW: Mobile Menu Overlay */}
       {showMobileMenu && isMobile && (
         <div className="mobile-menu-overlay" onClick={handleMobileMenuOverlayClick}>
