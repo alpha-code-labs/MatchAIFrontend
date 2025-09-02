@@ -583,62 +583,231 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
         ))}
       </div>
 
-      {/* PWA Install Prompt */}
+      {/* PWA Install Prompt - Redesigned */}
       {showPWAPrompt && (
-        <div className="pwa-prompt-overlay">
-          <div className="pwa-prompt-popup">
-            <div className="pwa-prompt-header">
-              <div className="pwa-prompt-icon">📱</div>
-              <h2 className="pwa-prompt-title">Never Miss a Match!</h2>
-            </div>
-            <div className="pwa-prompt-body">
-              <p className="pwa-prompt-description">
-                Install Match.AI on your home screen to get instant notifications when someone special matches with you.
-                Don't let your perfect match slip away!
-              </p>
-              <div className="pwa-benefits">
-                <div className="pwa-benefit">
-                  <span className="benefit-icon">💕</span>
-                  <span>Instant match notifications</span>
+        <div className="pwa-prompt-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.6)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000,
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          <div className="pwa-prompt-popup" style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '24px',
+            padding: '2px',
+            maxWidth: '400px',
+            width: '90%',
+            animation: 'slideUp 0.4s ease',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+          }}>
+            <div style={{
+              background: 'white',
+              borderRadius: '22px',
+              padding: '30px',
+              position: 'relative'
+            }}>
+              {/* Animated phone illustration */}
+              <div style={{
+                textAlign: 'center',
+                marginBottom: '20px',
+                position: 'relative'
+              }}>
+                <div style={{
+                  fontSize: '60px',
+                  animation: 'bounce 2s infinite',
+                  display: 'inline-block'
+                }}>
+                  📱
                 </div>
-                <div className="pwa-benefit">
-                  <span className="benefit-icon">💬</span>
-                  <span>Message alerts when matches chat</span>
-                </div>
-                <div className="pwa-benefit">
-                  <span className="benefit-icon">⚡</span>
-                  <span>One-tap access from home screen</span>
-                </div>
-                <div className="pwa-benefit">
-                  <span className="benefit-icon">🚀</span>
-                  <span>Works offline & loads instantly</span>
+                <div style={{
+                  position: 'absolute',
+                  top: '-5px',
+                  right: '45%',
+                  background: '#ff4458',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '24px',
+                  height: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  animation: 'pulse 2s infinite'
+                }}>
+                  3
                 </div>
               </div>
-            </div>
-            <div className="pwa-prompt-actions">
+
+              {/* Title */}
+              <h2 style={{
+                textAlign: 'center',
+                fontSize: '24px',
+                fontWeight: '700',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                marginBottom: '12px'
+              }}>
+                Never Miss Your Perfect Match!
+              </h2>
+
+              {/* Subtitle */}
+              <p style={{
+                textAlign: 'center',
+                color: '#6b7280',
+                fontSize: '15px',
+                marginBottom: '24px',
+                lineHeight: '1.5'
+              }}>
+                Get instant notifications when someone special wants to connect with you
+              </p>
+
+              {/* Benefits grid */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '12px',
+                marginBottom: '24px'
+              }}>
+                <div style={{
+                  background: 'linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ fontSize: '20px' }}>💕</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#2d3436' }}>Instant Matches</span>
+                </div>
+                <div style={{
+                  background: 'linear-gradient(135deg, #a8e6cf 0%, #81c784 100%)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ fontSize: '20px' }}>💬</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#2d3436' }}>Message Alerts</span>
+                </div>
+                <div style={{
+                  background: 'linear-gradient(135deg, #ffd3e1 0%, #ffafcc 100%)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ fontSize: '20px' }}>⚡</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#2d3436' }}>Quick Access</span>
+                </div>
+                <div style={{
+                  background: 'linear-gradient(135deg, #c7ecee 0%, #95afc0 100%)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ fontSize: '20px' }}>🚀</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600', color: '#2d3436' }}>Works Offline</span>
+                </div>
+              </div>
+
+              {/* Action buttons */}
               <button
-                className="install-app-button"
                 onClick={handlePWAInstall}
                 disabled={isInstalling}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  background: isInstalling ? '#e5e7eb' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: isInstalling ? 'wait' : 'pointer',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  transition: 'transform 0.2s',
+                  transform: isInstalling ? 'scale(0.98)' : 'scale(1)'
+                }}
+                onMouseEnter={(e) => !isInstalling && (e.currentTarget.style.transform = 'scale(1.02)')}
+                onMouseLeave={(e) => !isInstalling && (e.currentTarget.style.transform = 'scale(1)')}
               >
                 {isInstalling ? (
                   <>
-                    <div className="install-spinner"></div>
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      border: '2px solid white',
+                      borderTopColor: 'transparent',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite'
+                    }}></div>
                     Installing...
                   </>
                 ) : (
                   <>
-                    <span className="button-icon">📱</span>
                     Install Match.AI
+                    <span style={{ fontSize: '20px' }}>→</span>
                   </>
                 )}
               </button>
+
               <button
-                className="dismiss-pwa-button"
                 onClick={handlePWADismiss}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'transparent',
+                  color: '#6b7280',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 Maybe Later
               </button>
+
+              {/* Trust badge */}
+              <div style={{
+                textAlign: 'center',
+                marginTop: '16px',
+                paddingTop: '16px',
+                borderTop: '1px solid #e5e7eb'
+              }}>
+                <p style={{
+                  fontSize: '12px',
+                  color: '#9ca3af',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px'
+                }}>
+                  <span style={{ color: '#10b981' }}>🔒</span>
+                  Secure & Private • No extra downloads
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -787,45 +956,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
           </>
         )}
       </header>
-
-      {/* Debug Panel - Add this right after the header */}
-      {deviceInfo.isMobile && (
-        <div style={{
-          position: 'fixed',
-          top: '70px',
-          right: '10px',
-          background: 'rgba(0, 0, 0, 0.8)',
-          color: '#00ff00',
-          padding: '10px',
-          borderRadius: '8px',
-          fontSize: '12px',
-          fontFamily: 'monospace',
-          zIndex: 9999,
-          maxWidth: '300px'
-        }}>
-          <div style={{ marginBottom: '5px', color: '#ffff00', fontWeight: 'bold' }}>
-            🐛 PWA Debug Info
-          </div>
-          <div>Tour Done: {currentUserProfile?.hasSeenDashboardTour ? '✅' : '❌'}</div>
-          <div>PWA Installed: {currentUserProfile?.isPWAInstalled ? '✅' : '❌'}</div>
-          <div>Prompt Shown: {currentUserProfile?.pwaInstallPromptShown ? '✅' : '❌'}</div>
-          <div>Is Mobile: {deviceInfo.isMobile ? '✅' : '❌'}</div>
-          <div>Deferred Prompt: {deferredPrompt ? '✅ EXISTS' : '❌ NULL'}</div>
-          <div>Show Prompt State: {showPWAPrompt ? '✅ SHOWING' : '❌'}</div>
-          <div style={{ marginTop: '5px', fontSize: '10px', color: '#888' }}>
-            Should Trigger: {
-              currentUserProfile?.hasSeenDashboardTour &&
-              !currentUserProfile?.isPWAInstalled &&
-              !currentUserProfile?.pwaInstallPromptShown &&
-              deviceInfo.isMobile &&
-              deferredPrompt ? '✅ YES' : '❌ NO'
-            }
-          </div>
-          <div style={{ marginTop: '5px', fontSize: '10px', color: '#ff9900' }}>
-            Time: {new Date().toLocaleTimeString()}
-          </div>
-        </div>
-      )}
 
       {/* NEW: Mobile Menu Overlay */}
       {showMobileMenu && isMobile && (
