@@ -249,9 +249,14 @@ const LandingPage = () => {
         setShowSignInModal(false);
         setSignInEmail('');
         
+        // Store user data in localStorage for persistence
+        localStorage.setItem('userProfile', JSON.stringify(userData));
+        localStorage.setItem('authToken', 'authenticated');
+        
         // Store matches data if present
         if (matchesData && matchesData.totalCount > 0) {
           setMatchesData(matchesData);
+          localStorage.setItem('matchesData', JSON.stringify(matchesData));
         }
         
         // Check if user has completed 8 questions
@@ -303,10 +308,15 @@ const LandingPage = () => {
       const userData = response.data.user;
       setUserProfile(userData);
       
+      // Store user data in localStorage for persistence
+      localStorage.setItem('userProfile', JSON.stringify(userData));
+      localStorage.setItem('authToken', 'authenticated');
+      
       // NEW: Extract matches data (should be empty for new users)
       const matchesData = response.data.matches;
       if (matchesData) {
         setMatchesData(matchesData);
+        localStorage.setItem('matchesData', JSON.stringify(matchesData));
       }
     } 
     
@@ -326,6 +336,9 @@ const LandingPage = () => {
     setCompleteUserData(userData);
     setShowChat(false);
     setShowDashboard(true);
+    
+    // Store updated user data in localStorage for persistence
+    localStorage.setItem('userProfile', JSON.stringify(userData));
   };
 
   const handleNavigateHome = () => {
@@ -346,6 +359,9 @@ const LandingPage = () => {
   const handleUserDataUpdate = (updatedUserData) => {
     setUserProfile(updatedUserData); 
     setCompleteUserData(updatedUserData);
+    
+    // Store updated user data in localStorage for persistence
+    localStorage.setItem('userProfile', JSON.stringify(updatedUserData));
   };
 
   const getInitials = (firstName, lastName) => {
