@@ -467,26 +467,42 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
     setIsRequestingPermission(true);
     
     try {
+      console.log('Starting notification permission request...');
       const permission = await Notification.requestPermission();
+      console.log('Permission result:', permission);
       
       if (permission === 'granted') {
-        // Subscribe to push notifications
+        console.log('Permission granted, getting service worker...');
         const registration = await navigator.serviceWorker.ready;
+        console.log('Service worker ready:', registration);
+        
+        const vapidKey = process.env.REACT_APP_VAPID_PUBLIC_KEY;
+        console.log('VAPID key available:', !!vapidKey);
+        console.log('VAPID key first 10 chars:', vapidKey ? vapidKey.substring(0, 10) : 'undefined');
+        
+        if (!vapidKey) {
+          throw new Error('VAPID public key not found in environment');
+        }
+        
+        console.log('Creating push subscription...');
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: process.env.REACT_APP_VAPID_PUBLIC_KEY
+          applicationServerKey: vapidKey
         });
+        console.log('Push subscription created:', subscription);
         
         // Save subscription to backend
         await savePushSubscription(subscription);
+        console.log('Subscription saved to backend');
         
         setShowNotificationPrompt(false);
       } else {
-        // User denied permission
+        console.log('Permission denied or dismissed');
         setShowNotificationPrompt(false);
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
+      alert('Failed to enable notifications: ' + error.message);
       setShowNotificationPrompt(false);
     } finally {
       setIsRequestingPermission(false);
@@ -684,6 +700,85 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
             }}
           />
         ))}
+      </div>
+
+      {/* Debug Panel for Push Notifications */}
+      <div style={{
+        position: 'fixed',
+        top: '70px',
+        left: '10px',
+        background: 'rgba(0, 0, 0, 0.9)',
+        color: '#00ff00',
+        padding: '12px',
+        borderRadius: '8px',
+        fontSize: '11px',
+        fontFamily: 'monospace',
+        zIndex: 9999,
+        maxWidth: '320px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
+      }}>
+        <div style={{ marginBottom: '8px', color: '#ffff00', fontWeight: 'bold', fontSize: '12px' }}>
+          🔧 Push Notification Debug
+        </div>
+        
+        <div style={{ marginBottom: '4px' }}>
+          <span style={{ color: '#888' }}>VAPID Key: </span>
+          <span style={{ color: process.env.REACT_APP_VAPID_PUBLIC_KEY ? '#00ff00' : '#ff0000' }}>
+            {process.env.REACT_APP_VAPID_PUBLIC_KEY 
+              ? `✅ ${process.env.REACT_APP_VAPID_PUBLIC_KEY.substring(0, 10)}...` 
+              : '❌ MISSING'}
+          </span>
+        </div>
+        
+        <div style={{ marginBottom: '4px' }}>
+          <span style={{ color: '#888' }}>Service Worker: </span>
+          <span style={{ color: navigator.serviceWorker ? '#00ff00' : '#ff0000' }}>
+            {navigator.serviceWorker ? '✅ Available' : '❌ Not Available'}
+          </span>
+        </div>
+        
+        <div style={{ marginBottom: '4px' }}>
+          <span style={{ color: '#888' }}>Notification API: </span>
+          <span style={{ color: 'Notification' in window ? '#00ff00' : '#ff0000' }}>
+            {'Notification' in window ? '✅ Supported' : '❌ Not Supported'}
+          </span>
+        </div>
+        
+        <div style={{ marginBottom: '4px' }}>
+          <span style={{ color: '#888' }}>Permission: </span>
+          <span style={{ 
+            color: Notification.permission === 'granted' ? '#00ff00' : 
+                   Notification.permission === 'denied' ? '#ff0000' : '#ffaa00' 
+          }}>
+            {Notification.permission === 'granted' ? '✅ Granted' :
+             Notification.permission === 'denied' ? '❌ Denied' : '⏳ Default'}
+          </span>
+        </div>
+        
+        <div style={{ marginBottom: '4px' }}>
+          <span style={{ color: '#888' }}>Push Enabled: </span>
+          <span style={{ color: currentUserProfile?.pushNotificationsEnabled ? '#00ff00' : '#ff0000' }}>
+            {currentUserProfile?.pushNotificationsEnabled ? '✅ Yes' : '❌ No'}
+          </span>
+        </div>
+        
+        <div style={{ marginBottom: '4px' }}>
+          <span style={{ color: '#888' }}>Push Subscription: </span>
+          <span style={{ color: currentUserProfile?.pushSubscription ? '#00ff00' : '#ff0000' }}>
+            {currentUserProfile?.pushSubscription ? '✅ Saved' : '❌ Not Saved'}
+          </span>
+        </div>
+        
+        <div style={{ marginBottom: '4px' }}>
+          <span style={{ color: '#888' }}>PWA Installed: </span>
+          <span style={{ color: currentUserProfile?.isPWAInstalled ? '#00ff00' : '#ffaa00' }}>
+            {currentUserProfile?.isPWAInstalled ? '✅ Yes' : '⚠️ No'}
+          </span>
+        </div>
+        
+        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333', fontSize: '10px', color: '#666' }}>
+          API URL: {process.env.REACT_APP_API_URL ? '✅' : '❌'}
+        </div>
       </div>
 
       {/* PWA Install Prompt - Redesigned */}
