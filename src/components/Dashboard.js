@@ -34,10 +34,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstalling, setIsInstalling] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState({ isMobile: false, isTablet: false });
-  
-  // Notification permission state
-  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
-  const [isRequestingPermission, setIsRequestingPermission] = useState(false);
 
   const handleErrorOkClick = () => {
     setShowServerError(false);
@@ -100,44 +96,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
       }
     } catch (error) {
       console.error('❌ Error updating PWA status:', error);
-      setShowServerError(true);
-    }
-  }, [currentUserProfile?.email, onUserDataUpdate]);
-  
-  // Save push subscription to backend
-  const savePushSubscription = useCallback(async (subscription) => {
-    if (!currentUserProfile?.email) {
-      console.error('No user email available for push subscription');
-      return;
-    }
-
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/push-subscription`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: currentUserProfile.email,
-          pushSubscription: subscription,
-          pushNotificationsEnabled: true
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      const updatedUserData = result.data.user;
-      setCurrentUserProfile(updatedUserData);
-
-      if (onUserDataUpdate) {
-        onUserDataUpdate(updatedUserData);
-      }
-    } catch (error) {
-      console.error('❌ Error saving push subscription:', error);
       setShowServerError(true);
     }
   }, [currentUserProfile?.email, onUserDataUpdate]);
@@ -283,13 +241,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
       setDeferredPrompt(null);
       setShowPWAPrompt(false);
       updatePWAStatus({ isPWAInstalled: true });
-      
-      // Show notification prompt after PWA install
-      setTimeout(() => {
-        if (!currentUserProfile?.pushNotificationsEnabled && Notification.permission !== 'granted') {
-          setShowNotificationPrompt(true);
-        }
-      }, 1000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -299,7 +250,7 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, [updatePWAStatus, currentUserProfile?.pushNotificationsEnabled]);
+  }, [updatePWAStatus]);
 
   // Trigger PWA prompt after tour completion
   useEffect(() => {
@@ -334,19 +285,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
       updatePWAStatus({ pwaPromptShown: true });
     }
   }, [currentUserProfile, deviceInfo.isMobile, deferredPrompt, updatePWAStatus]);
-  
-  // Check if should show notification prompt for browser users
-  useEffect(() => {
-    if (currentUserProfile && 
-        !currentUserProfile.isPWAInstalled && 
-        !currentUserProfile.pushNotificationsEnabled && 
-        currentUserProfile.hasSeenDashboardTour &&
-        Notification.permission === 'default') {
-      setTimeout(() => {
-        setShowNotificationPrompt(true);
-      }, 3000);
-    }
-  }, [currentUserProfile]);
 
   // Handle matches data and show notification popup
   useEffect(() => {
@@ -425,13 +363,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
           await updatePWAStatus({
             pwaPromptAction: 'accepted'
           });
-          
-          // Show notification prompt after successful install
-          setTimeout(() => {
-            if (!currentUserProfile?.pushNotificationsEnabled && Notification.permission !== 'granted') {
-              setShowNotificationPrompt(true);
-            }
-          }, 1000);
         } else {
           await updatePWAStatus({
             pwaPromptAction: 'dismissed'
@@ -461,56 +392,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
     updatePWAStatus({
       pwaPromptAction: 'rejected'
     });
-  };
-  
-  const handleNotificationPermission = async () => {
-    setIsRequestingPermission(true);
-    
-    try {
-      console.log('Starting notification permission request...');
-      const permission = await Notification.requestPermission();
-      console.log('Permission result:', permission);
-      
-      if (permission === 'granted') {
-        console.log('Permission granted, getting service worker...');
-        const registration = await navigator.serviceWorker.ready;
-        console.log('Service worker ready:', registration);
-        
-        const vapidKey = process.env.REACT_APP_VAPID_PUBLIC_KEY;
-        console.log('VAPID key available:', !!vapidKey);
-        console.log('VAPID key first 10 chars:', vapidKey ? vapidKey.substring(0, 10) : 'undefined');
-        
-        if (!vapidKey) {
-          throw new Error('VAPID public key not found in environment');
-        }
-        
-        console.log('Creating push subscription...');
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: vapidKey
-        });
-        console.log('Push subscription created:', subscription);
-        
-        // Save subscription to backend
-        await savePushSubscription(subscription);
-        console.log('Subscription saved to backend');
-        
-        setShowNotificationPrompt(false);
-      } else {
-        console.log('Permission denied or dismissed');
-        setShowNotificationPrompt(false);
-      }
-    } catch (error) {
-      console.error('Error requesting notification permission:', error);
-      alert('Failed to enable notifications: ' + error.message);
-      setShowNotificationPrompt(false);
-    } finally {
-      setIsRequestingPermission(false);
-    }
-  };
-  
-  const handleNotificationDismiss = () => {
-    setShowNotificationPrompt(false);
   };
 
   const handleHeaderInstallClick = async () => {
@@ -700,85 +581,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
             }}
           />
         ))}
-      </div>
-
-      {/* Debug Panel for Push Notifications */}
-      <div style={{
-        position: 'fixed',
-        top: '70px',
-        left: '10px',
-        background: 'rgba(0, 0, 0, 0.9)',
-        color: '#00ff00',
-        padding: '12px',
-        borderRadius: '8px',
-        fontSize: '11px',
-        fontFamily: 'monospace',
-        zIndex: 9999,
-        maxWidth: '320px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
-      }}>
-        <div style={{ marginBottom: '8px', color: '#ffff00', fontWeight: 'bold', fontSize: '12px' }}>
-          🔧 Push Notification Debug
-        </div>
-        
-        <div style={{ marginBottom: '4px' }}>
-          <span style={{ color: '#888' }}>VAPID Key: </span>
-          <span style={{ color: process.env.REACT_APP_VAPID_PUBLIC_KEY ? '#00ff00' : '#ff0000' }}>
-            {process.env.REACT_APP_VAPID_PUBLIC_KEY 
-              ? `✅ ${process.env.REACT_APP_VAPID_PUBLIC_KEY.substring(0, 10)}...` 
-              : '❌ MISSING'}
-          </span>
-        </div>
-        
-        <div style={{ marginBottom: '4px' }}>
-          <span style={{ color: '#888' }}>Service Worker: </span>
-          <span style={{ color: navigator.serviceWorker ? '#00ff00' : '#ff0000' }}>
-            {navigator.serviceWorker ? '✅ Available' : '❌ Not Available'}
-          </span>
-        </div>
-        
-        <div style={{ marginBottom: '4px' }}>
-          <span style={{ color: '#888' }}>Notification API: </span>
-          <span style={{ color: 'Notification' in window ? '#00ff00' : '#ff0000' }}>
-            {'Notification' in window ? '✅ Supported' : '❌ Not Supported'}
-          </span>
-        </div>
-        
-        <div style={{ marginBottom: '4px' }}>
-          <span style={{ color: '#888' }}>Permission: </span>
-          <span style={{ 
-            color: Notification.permission === 'granted' ? '#00ff00' : 
-                   Notification.permission === 'denied' ? '#ff0000' : '#ffaa00' 
-          }}>
-            {Notification.permission === 'granted' ? '✅ Granted' :
-             Notification.permission === 'denied' ? '❌ Denied' : '⏳ Default'}
-          </span>
-        </div>
-        
-        <div style={{ marginBottom: '4px' }}>
-          <span style={{ color: '#888' }}>Push Enabled: </span>
-          <span style={{ color: currentUserProfile?.pushNotificationsEnabled ? '#00ff00' : '#ff0000' }}>
-            {currentUserProfile?.pushNotificationsEnabled ? '✅ Yes' : '❌ No'}
-          </span>
-        </div>
-        
-        <div style={{ marginBottom: '4px' }}>
-          <span style={{ color: '#888' }}>Push Subscription: </span>
-          <span style={{ color: currentUserProfile?.pushSubscription ? '#00ff00' : '#ff0000' }}>
-            {currentUserProfile?.pushSubscription ? '✅ Saved' : '❌ Not Saved'}
-          </span>
-        </div>
-        
-        <div style={{ marginBottom: '4px' }}>
-          <span style={{ color: '#888' }}>PWA Installed: </span>
-          <span style={{ color: currentUserProfile?.isPWAInstalled ? '#00ff00' : '#ffaa00' }}>
-            {currentUserProfile?.isPWAInstalled ? '✅ Yes' : '⚠️ No'}
-          </span>
-        </div>
-        
-        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #333', fontSize: '10px', color: '#666' }}>
-          API URL: {process.env.REACT_APP_API_URL ? '✅' : '❌'}
-        </div>
       </div>
 
       {/* PWA Install Prompt - Redesigned */}
@@ -1006,169 +808,6 @@ const Dashboard = ({ userProfile, matches, onNavigateHome, onUserDataUpdate, onL
                   Secure & Private • No extra downloads
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Notification Permission Prompt */}
-      {showNotificationPrompt && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.6)',
-          backdropFilter: 'blur(10px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10001,
-          animation: 'fadeIn 0.3s ease'
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #ff6b6b 0%, #ff4458 100%)',
-            borderRadius: '24px',
-            padding: '2px',
-            maxWidth: '380px',
-            width: '90%',
-            animation: 'slideUp 0.4s ease',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
-          }}>
-            <div style={{
-              background: 'white',
-              borderRadius: '22px',
-              padding: '30px',
-              position: 'relative'
-            }}>
-              {/* Bell illustration */}
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '20px'
-              }}>
-                <div style={{
-                  fontSize: '60px',
-                  animation: 'ring 1s ease-in-out infinite',
-                  display: 'inline-block',
-                  transformOrigin: 'top'
-                }}>
-                  🔔
-                </div>
-              </div>
-
-              {/* Title */}
-              <h2 style={{
-                textAlign: 'center',
-                fontSize: '22px',
-                fontWeight: '700',
-                background: 'linear-gradient(135deg, #ff6b6b 0%, #ff4458 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                marginBottom: '12px'
-              }}>
-                Stay Connected!
-              </h2>
-
-              {/* Description */}
-              <p style={{
-                textAlign: 'center',
-                color: '#6b7280',
-                fontSize: '14px',
-                marginBottom: '20px',
-                lineHeight: '1.5'
-              }}>
-                Enable notifications to instantly know when you get new matches or messages
-              </p>
-
-              {/* Info boxes */}
-              <div style={{
-                background: currentUserProfile?.isPWAInstalled ? '#f0fdf4' : '#fef3c7',
-                border: currentUserProfile?.isPWAInstalled ? '1px solid #86efac' : '1px solid #fde68a',
-                borderRadius: '12px',
-                padding: '12px',
-                marginBottom: '20px'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <span style={{ fontSize: '16px' }}>
-                    {currentUserProfile?.isPWAInstalled ? '✅' : '⚠️'}
-                  </span>
-                  <span style={{ 
-                    fontSize: '13px', 
-                    color: currentUserProfile?.isPWAInstalled ? '#059669' : '#d97706'
-                  }}>
-                    {currentUserProfile?.isPWAInstalled 
-                      ? 'You\'ll get notifications anytime, even when the app is closed!'
-                      : 'Browser notifications only work while this tab is open'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action buttons */}
-              <button
-                onClick={handleNotificationPermission}
-                disabled={isRequestingPermission}
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  background: isRequestingPermission ? '#e5e7eb' : 'linear-gradient(135deg, #ff6b6b 0%, #ff4458 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  fontSize: '15px',
-                  fontWeight: '700',
-                  cursor: isRequestingPermission ? 'wait' : 'pointer',
-                  marginBottom: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  transition: 'transform 0.2s',
-                  transform: isRequestingPermission ? 'scale(0.98)' : 'scale(1)'
-                }}
-                onMouseEnter={(e) => !isRequestingPermission && (e.currentTarget.style.transform = 'scale(1.02)')}
-                onMouseLeave={(e) => !isRequestingPermission && (e.currentTarget.style.transform = 'scale(1)')}
-              >
-                {isRequestingPermission ? (
-                  <>
-                    <div style={{
-                      width: '14px',
-                      height: '14px',
-                      border: '2px solid white',
-                      borderTopColor: 'transparent',
-                      borderRadius: '50%',
-                      animation: 'spin 1s linear infinite'
-                    }}></div>
-                    Enabling...
-                  </>
-                ) : (
-                  'Enable Notifications'
-                )}
-              </button>
-
-              <button
-                onClick={handleNotificationDismiss}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  background: 'transparent',
-                  color: '#6b7280',
-                  border: 'none',
-                  borderRadius: '12px',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                Not Now
-              </button>
             </div>
           </div>
         </div>
