@@ -37,19 +37,19 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
     },
     {
       id: 3,
-      text: "We believe dating should be about deep, meaningful connections based on who you really are, not just how you look in photos.",
+      text: "We believe dating should be about deep, meaningful connections based on who you really are, not just how you look in photos.That's why we've ditched the endless swiping. Instead, I'll get to know the real you through some thoughtful questions. Ready to find someone who truly gets you? Let's dive deeper than surface level! ",
       delay: 2500
     },
-    {
-      id: 4,
-      text: "That's why we've ditched the endless swiping. Instead, I'll get to know the real you through some thoughtful questions.",
-      delay: 2800
-    },
-    {
-      id: 5,
-      text: "Ready to find someone who truly gets you? Let's dive deeper than surface level! ✨",
-      delay: 2200
-    }
+    // {
+    //   id: 4,
+    //   text: "",
+    //   delay: 2800
+    // },
+    // {
+    //   id: 5,
+    //   text: "✨",
+    //   delay: 2200
+    // }
   ];
 
   const scrollToBottom = () => {
