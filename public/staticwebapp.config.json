@@ -1,19 +1,5 @@
 {
   "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/static/*", "*.css", "*.js", "*.json", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.ico", "*.svg", "*.woff", "*.woff2", "*.ttf"]
-  },
-  "routes": [
-    {
-      "route": "/static/*",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    }
-  ],
-  "mimeTypes": {
-    ".css": "text/css",
-    ".js": "application/javascript",
-    ".json": "application/json"
+    "rewrite": "/index.html"
   }
 }
