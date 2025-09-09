@@ -92,8 +92,6 @@
 .form-content {
   padding: 2rem;
   min-height: 400px;
-  max-height: calc(100vh - 200px); /* Add this */
-  overflow-y: auto; /* Add this */
 }
 
 .form-step {
