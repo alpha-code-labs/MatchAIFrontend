@@ -196,6 +196,38 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
     }
   }, [isGoogleLoaded, step]);
 
+  useEffect(() => {
+  // Windows scroll fix
+  const container = document.querySelector('.form-container');
+  const content = document.querySelector('.form-content');
+  
+  if (container && content) {
+    // Make container a flex container
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.maxHeight = '90vh';
+    
+    // Make content scrollable
+    content.style.flex = '1';
+    content.style.overflowY = 'auto';
+    content.style.minHeight = '0';
+  }
+  
+  // Cleanup on unmount
+  return () => {
+    if (container) {
+      container.style.display = '';
+      container.style.flexDirection = '';
+      container.style.maxHeight = '';
+    }
+    if (content) {
+      content.style.flex = '';
+      content.style.overflowY = '';
+      content.style.minHeight = '';
+    }
+  };
+}, []);
+
   const handleCitySelect = (cityName, country) => {
     const cityValue = `${cityName}, ${country}`;
     updateField('city', cityValue);
