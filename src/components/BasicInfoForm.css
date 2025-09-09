@@ -1134,3 +1134,52 @@ input.error:focus {
     min-height: 44px;
   }
 }
+/* Scrolling fix for Windows/Dell laptops - Add to END of BasicInfoForm.css */
+
+/* Ensure the form container uses flexbox properly */
+.basic-info-form .form-container {
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 90vh !important;
+  max-height: 90dvh !important;
+}
+
+/* Make content scrollable */
+.basic-info-form .form-content {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 0 !important; /* Critical for flexbox */
+}
+
+/* Keep header at top */
+.basic-info-form .form-header {
+  flex-shrink: 0 !important;
+}
+
+/* Keep footer with Continue button always visible at bottom */
+.basic-info-form .form-footer {
+  flex-shrink: 0 !important;
+  position: relative !important; /* Ensure it's not cut off */
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .basic-info-form .form-container {
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+  }
+}
+
+/* Fallback for very restrictive viewports */
+@media (max-height: 600px) {
+  .basic-info-form .form-container {
+    max-height: 100vh !important;
+  }
+  
+  .basic-info-form .form-content {
+    max-height: calc(100vh - 200px) !important; /* Reserve space for header/footer */
+  }
+}
