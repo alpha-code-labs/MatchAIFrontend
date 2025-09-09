@@ -230,6 +230,9 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
   })
   .slice(0, 15);
 
+  console.log('Total cities:', majorCities.length, 'Filtered cities:', filteredCities.length, 'Search term:', citySearchTerm);
+
+
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setErrors(prev => {
