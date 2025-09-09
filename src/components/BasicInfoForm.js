@@ -384,12 +384,12 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
     switch(step) {
       case 1:
         return (
-          <div className="form-step">
-            <h2 className="step-title">Let's start with the basics! ✨</h2>
+          <div className="bif-form-step">
+            <h2 className="bif-step-title">Let's start with the basics! ✨</h2>
             
-            <div className="form-group">
+            <div className="bif-form-group">
               <label>Profile Picture (Optional)</label>
-              <div className="profile-upload">
+              <div className="bif-profile-upload">
                 <input
                   type="file"
                   id="profile-picture"
@@ -397,11 +397,11 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                   onChange={handleProfilePictureChange}
                   style={{ display: 'none' }}
                 />
-                <label htmlFor="profile-picture" className="profile-upload-label">
+                <label htmlFor="profile-picture" className="bif-profile-upload-label">
                   {formData.profilePicturePreview ? (
-                    <img src={formData.profilePicturePreview} alt="Profile preview" className="profile-preview" />
+                    <img src={formData.profilePicturePreview} alt="Profile preview" className="bif-profile-preview" />
                   ) : (
-                    <div className="profile-placeholder">
+                    <div className="bif-profile-placeholder">
                       <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                       </svg>
@@ -410,15 +410,15 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                   )}
                 </label>
               </div>
-              {errors.profilePicture && <span className="error-text">{errors.profilePicture}</span>}
-              <small className="helper-text profile-helper">
+              {errors.profilePicture && <span className="bif-error-text">{errors.profilePicture}</span>}
+              <small className="bif-helper-text bif-profile-helper">
                 💡 While not required, adding a photo significantly increases your chances of making meaningful connections!
               </small>
             </div>
 
-            <div className="form-group">
+            <div className="bif-form-group">
               <label>What's your name?</label>
-              <div className="name-row">
+              <div className="bif-name-row">
                 <input
                   type="text"
                   value={formData.firstName}
@@ -434,11 +434,11 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                   className={errors.lastName ? 'error' : ''}
                 />
               </div>
-              {errors.firstName && <span className="error-text">{errors.firstName}</span>}
-              {errors.lastName && <span className="error-text">{errors.lastName}</span>}
+              {errors.firstName && <span className="bif-error-text">{errors.firstName}</span>}
+              {errors.lastName && <span className="bif-error-text">{errors.lastName}</span>}
             </div>
             
-            <div className="form-group">
+            <div className="bif-form-group">
               <label>How old are you?</label>
               <input
                 type="number"
@@ -449,57 +449,57 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                 max="100"
                 className={errors.age ? 'error' : ''}
               />
-              {errors.age && <span className="error-text">{errors.age}</span>}
+              {errors.age && <span className="bif-error-text">{errors.age}</span>}
             </div>
           </div>
         );
 
       case 2:
         return (
-          <div className="form-step">
-            <h2 className="step-title">Tell us about yourself 🌟</h2>
-            <div className="form-group">
+          <div className="bif-form-step">
+            <h2 className="bif-step-title">Tell us about yourself 🌟</h2>
+            <div className="bif-form-group">
               <label>I identify as</label>
-              <div className="option-grid">
+              <div className="bif-option-grid">
                 {['Man', 'Woman', 'Non-binary', 'Other'].map(option => (
                   <button
                     key={option}
                     type="button"
-                    className={`option-button ${formData.gender === option ? 'selected' : ''}`}
+                    className={`bif-option-button ${formData.gender === option ? 'bif-selected' : ''}`}
                     onClick={() => updateField('gender', option)}
                   >
                     {option}
                   </button>
                 ))}
               </div>
-              {errors.gender && <span className="error-text">{errors.gender}</span>}
+              {errors.gender && <span className="bif-error-text">{errors.gender}</span>}
             </div>
-            <div className="form-group">
+            <div className="bif-form-group">
               <label>I'm interested in</label>
-              <div className="option-grid">
+              <div className="bif-option-grid">
                 {['Men', 'Women', 'Non-binary', 'Everyone'].map(option => (
                   <button
                     key={option}
                     type="button"
-                    className={`option-button ${formData.interestedIn === option ? 'selected' : ''}`}
+                    className={`bif-option-button ${formData.interestedIn === option ? 'bif-selected' : ''}`}
                     onClick={() => updateField('interestedIn', option)}
                   >
                     {option}
                   </button>
                 ))}
               </div>
-              {errors.interestedIn && <span className="error-text">{errors.interestedIn}</span>}
+              {errors.interestedIn && <span className="bif-error-text">{errors.interestedIn}</span>}
             </div>
           </div>
         );
 
       case 3:
         return (
-          <div className="form-step">
-            <h2 className="step-title">Where are you located? 📍</h2>
-            <div className="form-group">
+          <div className="bif-form-step">
+            <h2 className="bif-step-title">Where are you located? 📍</h2>
+            <div className="bif-form-group">
               <label>Your city</label>
-              <div className="city-input-container">
+              <div className="bif-city-input-container">
                 <input
                   type="text"
                   value={citySearchTerm}
@@ -509,49 +509,49 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                   className={errors.city ? 'error' : ''}
                 />
                 {showCityDropdown && (
-                  <div className={`city-dropdown ${isMobile ? 'mobile' : ''}`}>
+                  <div className={`bif-city-dropdown ${isMobile ? 'bif-mobile' : ''}`}>
                     {isMobile && (
-                      <div className="city-dropdown-header">
+                      <div className="bif-city-dropdown-header">
                         <h3>Select City</h3>
                         <button 
-                          className="close-dropdown"
+                          className="bif-close-dropdown"
                           onClick={() => setShowCityDropdown(false)}
                         >
                           ✕
                         </button>
                       </div>
                     )}
-                    <div className="city-options-container">
+                    <div className="bif-city-options-container">
                       {filteredCities.length > 0 ? (
                         filteredCities.map((city, index) => (
                           <div
                             key={index}
-                            className="city-option"
+                            className="bif-city-option"
                             onClick={() => handleCitySelect(city.name, city.country)}
                           >
-                            <span className="city-name">{city.name}</span>
-                            <span className="city-country">{city.country}</span>
+                            <span className="bif-city-name">{city.name}</span>
+                            <span className="bif-city-country">{city.country}</span>
                           </div>
                         ))
                       ) : (
-                        <div className="city-option">
-                          <span className="city-name">Use "{citySearchTerm}"</span>
+                        <div className="bif-city-option">
+                          <span className="bif-city-name">Use "{citySearchTerm}"</span>
                         </div>
                       )}
                     </div>
                   </div>
                 )}
               </div>
-              {errors.city && <span className="error-text">{errors.city}</span>}
+              {errors.city && <span className="bif-error-text">{errors.city}</span>}
             </div>
-            <div className="form-group">
+            <div className="bif-form-group">
               <label>What are you looking for?</label>
-              <div className="option-grid">
+              <div className="bif-option-grid">
                 {['Friendship', 'Dating/Relationships', 'Both'].map(option => (
                   <button
                     key={option}
                     type="button"
-                    className={`option-button ${formData.lookingFor === option ? 'selected' : ''}`}
+                    className={`bif-option-button ${formData.lookingFor === option ? 'bif-selected' : ''}`}
                     onClick={() => updateField('lookingFor', option)}
                   >
                     {option === 'Dating/Relationships' ? '💕 Dating' : option === 'Friendship' ? '👥 Friends' : '🌟 Both'}
@@ -560,18 +560,18 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                   </button>
                 ))}
               </div>
-              {errors.lookingFor && <span className="error-text">{errors.lookingFor}</span>}
+              {errors.lookingFor && <span className="bif-error-text">{errors.lookingFor}</span>}
             </div>
           </div>
         );
 
       case 4:
         return (
-          <div className="form-step">
-            <h2 className="step-title">What's your current situation? 💭</h2>
-            <div className="form-group">
+          <div className="bif-form-step">
+            <h2 className="bif-step-title">What's your current situation? 💭</h2>
+            <div className="bif-form-group">
               <label>Relationship status</label>
-              <div className="option-grid single-column">
+              <div className="bif-option-grid bif-single-column">
                 {[
                   'Single',
                   'In a relationship',
@@ -582,25 +582,25 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                   <button
                     key={option}
                     type="button"
-                    className={`option-button ${formData.relationshipStatus === option ? 'selected' : ''}`}
+                    className={`bif-option-button ${formData.relationshipStatus === option ? 'bif-selected' : ''}`}
                     onClick={() => updateField('relationshipStatus', option)}
                   >
                     {option}
                   </button>
                 ))}
               </div>
-              {errors.relationshipStatus && <span className="error-text">{errors.relationshipStatus}</span>}
+              {errors.relationshipStatus && <span className="bif-error-text">{errors.relationshipStatus}</span>}
             </div>
           </div>
         );
 
       case 5:
         return (
-          <div className="form-step">
-            <h2 className="step-title">Almost there! 📧</h2>
-            <p className="step-subtitle">We need your email to send you amazing matches</p>
+          <div className="bif-form-step">
+            <h2 className="bif-step-title">Almost there! 📧</h2>
+            <p className="bif-step-subtitle">We need your email to send you amazing matches</p>
             
-            <div className="form-group">
+            <div className="bif-form-group">
               <label>Email address</label>
               <input
                 type="email"
@@ -609,20 +609,20 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                 placeholder="your@email.com"
                 className={errors.email ? 'error' : ''}
               />
-              {errors.email && <span className="error-text">{errors.email}</span>}
+              {errors.email && <span className="bif-error-text">{errors.email}</span>}
             </div>
 
-            <div className="divider">
-              <span className="divider-text">OR</span>
+            <div className="bif-divider">
+              <span className="bif-divider-text">OR</span>
             </div>
 
-            <div className="form-group">
-              <div className="google-signin-container">
+            <div className="bif-form-group">
+              <div className="bif-google-signin-container">
                 {isGoogleLoaded ? (
-                  <div ref={googleButtonRef} className="google-button-wrapper"></div>
+                  <div ref={googleButtonRef} className="bif-google-button-wrapper"></div>
                 ) : (
-                  <div className="google-loading">
-                    <div className="loading-spinner"></div>
+                  <div className="bif-google-loading">
+                    <div className="bif-loading-spinner"></div>
                     Loading Google Sign-In...
                   </div>
                 )}
@@ -633,13 +633,13 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
 
       case 6:
         return (
-          <div className="form-step">
-            <h2 className="step-title">Last step! 📱</h2>
-            <p className="step-subtitle">Adding your phone number helps us provide better matches (optional)</p>
-            <div className="form-group">
+          <div className="bif-form-step">
+            <h2 className="bif-step-title">Last step! 📱</h2>
+            <p className="bif-step-subtitle">Adding your phone number helps us provide better matches (optional)</p>
+            <div className="bif-form-group">
               <label>Phone number (Optional)</label>
-              <div className="phone-input-container">
-                <select className="country-select">
+              <div className="bif-phone-input-container">
+                <select className="bif-country-select">
                   <option value="+91">🇮🇳 +91</option>
                   <option value="+1">🇺🇸 +1</option>
                   <option value="+44">🇬🇧 +44</option>
@@ -653,8 +653,8 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                   className={errors.phone ? 'error' : ''}
                 />
               </div>
-              {errors.phone && <span className="error-text">{errors.phone}</span>}
-              <small className="helper-text">
+              {errors.phone && <span className="bif-error-text">{errors.phone}</span>}
+              <small className="bif-helper-text">
                 💡 This helps us provide better recommendations and keep the community safe
               </small>
             </div>
@@ -667,36 +667,36 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
   };
 
   return (
-    <div className="basic-info-form">
-      <div className="form-container">
-        <div className="form-header">
-          <button className="back-button" onClick={prevStep}>
+    <div className="bif-basic-info-form">
+      <div className="bif-form-container">
+        <div className="bif-form-header">
+          <button className="bif-back-button" onClick={prevStep}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
             </svg>
           </button>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{width: `${(step / 6) * 100}%`}}></div>
+          <div className="bif-progress-bar">
+            <div className="bif-progress-fill" style={{width: `${(step / 6) * 100}%`}}></div>
           </div>
-          <div className="step-counter">{step}/6</div>
-          <button className="close-button" onClick={handleClose}>
+          <div className="bif-step-counter">{step}/6</div>
+          <button className="bif-close-button" onClick={handleClose}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
           </button>
         </div>
 
-        <div className="form-content">
+        <div className="bif-form-content">
           {isSubmitting ? (
-            <div className="form-step">
-              <div className="loading-state">
-                <div className="loading-icon">⚡</div>
-                <h2 className="loading-title">Creating Your Profile...</h2>
-                <p className="loading-message">
+            <div className="bif-form-step">
+              <div className="bif-loading-state">
+                <div className="bif-loading-icon">⚡</div>
+                <h2 className="bif-loading-title">Creating Your Profile...</h2>
+                <p className="bif-loading-message">
                   We're setting up your account and getting everything ready for you. This will just take a moment!
                 </p>
-                <div className="loading-progress">
-                  <div className="progress-dots">
+                <div className="bif-loading-progress">
+                  <div className="bif-progress-dots">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -710,16 +710,16 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
           )}
         </div>
 
-        <div className="form-footer">
+        <div className="bif-form-footer">
           <button 
-            className={`next-button ${isSubmitting ? 'loading' : ''}`} 
+            className={`bif-next-button ${isSubmitting ? 'bif-loading' : ''}`} 
             onClick={nextStep}
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <>
                 <span>Creating Profile...</span>
-                <div className="loading-spinner"></div>
+                <div className="bif-loading-spinner"></div>
               </>
             ) : (
               <>
@@ -735,16 +735,16 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
 
       {/* Welcome Message Modal */}
       {showWelcomeMessage && (
-        <div className="welcome-overlay">
-          <div className="welcome-content">
-            <div className="welcome-icon">🎉</div>
-            <h2 className="welcome-title">Welcome to Match.AI!</h2>
-            <p className="welcome-message">
+        <div className="bif-welcome-overlay">
+          <div className="bif-welcome-content">
+            <div className="bif-welcome-icon">🎉</div>
+            <h2 className="bif-welcome-title">Welcome to Match.AI!</h2>
+            <p className="bif-welcome-message">
               Your profile has been completed.<br />
               Let Match.AI find you a perfect match!
             </p>
-            <div className="welcome-loader">
-              <div className="loading-dots">
+            <div className="bif-welcome-loader">
+              <div className="bif-loading-dots">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -756,19 +756,19 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
 
       {/* Exit Confirmation Modal */}
       {showExitModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
+        <div className="bif-modal-overlay">
+          <div className="bif-modal-content">
+            <div className="bif-modal-header">
               <h3>We're sad to see you go! 😢</h3>
             </div>
-            <div className="modal-body">
+            <div className="bif-modal-body">
               <p>Your progress will be lost if you leave now. Come back anytime when you're ready to find amazing connections!</p>
             </div>
-            <div className="modal-footer">
-              <button className="modal-button secondary" onClick={cancelExit}>
+            <div className="bif-modal-footer">
+              <button className="bif-modal-button bif-secondary" onClick={cancelExit}>
                 Stay & Continue
               </button>
-              <button className="modal-button primary" onClick={confirmExit}>
+              <button className="bif-modal-button bif-primary" onClick={confirmExit}>
                 Yes, Leave
               </button>
             </div>
