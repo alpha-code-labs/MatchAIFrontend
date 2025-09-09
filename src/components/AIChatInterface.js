@@ -406,7 +406,7 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
       id: userMessageId,
       text: userResponse,
       sender: 'user',
-      timestamp: new Date()
+      // timestamp: new Date()
     }]);
     
     
