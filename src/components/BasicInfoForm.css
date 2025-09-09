@@ -1134,29 +1134,3 @@ input.error:focus {
     min-height: 44px;
   }
 }
-
-/* Windows Chrome specific fix - ONLY for desktop/laptop screens */
-@media screen and (min-width: 769px) {
-  .basic-info-form .form-container {
-    max-height: 85vh !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-  
-  .basic-info-form .form-content {
-    flex: 1 1 auto !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    min-height: 0 !important;
-    max-height: calc(85vh - 180px) !important; /* Account for header and footer */
-  }
-  
-  .basic-info-form .form-header {
-    flex-shrink: 0 !important;
-  }
-  
-  .basic-info-form .form-footer {
-    flex-shrink: 0 !important;
-    position: relative !important;
-  }
-}
