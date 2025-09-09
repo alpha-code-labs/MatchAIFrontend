@@ -37,7 +37,7 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
     },
     {
       id: 3,
-      text: "We believe dating should be about deep, meaningful connections based on who you really are, not just how you look in photos.That's why we've ditched the endless swiping. Instead, I'll get to know the real you through some thoughtful questions. Ready to find someone who truly gets you? Let's dive deeper than surface level! ",
+      text: "Dating should be about meaningful connections, not just photos. That's why we've ditched endless swiping for thoughtful questions that reveal the real you. Ready to find someone who truly gets you?",
       delay: 2500
     },
     // {
