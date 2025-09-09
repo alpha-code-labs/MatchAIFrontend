@@ -39,17 +39,7 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
       id: 3,
       text: "Dating should be about meaningful connections, not just photos. That's why we've ditched endless swiping for thoughtful questions that reveal the real you. Ready to find someone who truly gets you?",
       delay: 2500
-    },
-    // {
-    //   id: 4,
-    //   text: "",
-    //   delay: 2800
-    // },
-    // {
-    //   id: 5,
-    //   text: "✨",
-    //   delay: 2200
-    // }
+    }
   ];
 
   const scrollToBottom = () => {
@@ -203,8 +193,7 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
     setMessages(prev => [...prev, {
       id: uniqueId,
       text: '',
-      sender: 'ai',
-      timestamp: new Date()
+      sender: 'ai'
     }]);
     setIsTyping(true);
   };
@@ -381,8 +370,7 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
     setMessages(prev => [...prev, {
       id: uniqueId,
       text: '',
-      sender: 'ai',
-      timestamp: new Date()
+      sender: 'ai'
     }]);
 
     setIsTyping(true);
@@ -405,8 +393,7 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
     setMessages(prev => [...prev, {
       id: userMessageId,
       text: userResponse,
-      sender: 'user',
-      // timestamp: new Date()
+      sender: 'user'
     }]);
     
     
@@ -584,9 +571,6 @@ const AIChatInterface = ({ onClose, userProfile, onDashboardOpen, startFromQuest
               </div>
               <div className={`message-bubble ${message.sender === 'user' ? 'user-bubble' : ''}`}>
                 <div className="message-text">{message.text}</div>
-                <div className="message-time">
-                  {message.timestamp?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
               </div>
             </div>
           ))}
