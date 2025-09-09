@@ -214,11 +214,21 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
 
   // Filter cities based on search term
   const filteredCities = majorCities
-    .filter(city => 
-      city.name.toLowerCase().includes(citySearchTerm.toLowerCase()) ||
-      city.country.toLowerCase().includes(citySearchTerm.toLowerCase())
-    )
-    .slice(0, 10);
+  .filter(city => 
+    city.name.toLowerCase().includes(citySearchTerm.toLowerCase()) ||
+    city.country.toLowerCase().includes(citySearchTerm.toLowerCase())
+  )
+  .sort((a, b) => {
+    // Prioritize cities that start with the search term
+    const aStarts = a.name.toLowerCase().startsWith(citySearchTerm.toLowerCase());
+    const bStarts = b.name.toLowerCase().startsWith(citySearchTerm.toLowerCase());
+    
+    if (aStarts && !bStarts) return -1;
+    if (!aStarts && bStarts) return 1;
+    
+    return 0;
+  })
+  .slice(0, 15);
 
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
