@@ -1033,4 +1033,4 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
     </div>
   );
 };
-export default BasicInfoFor
+export default BasicInfoForm
