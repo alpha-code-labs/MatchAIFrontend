@@ -517,81 +517,87 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      setIsSubmitting(true);
-      
-      const formDataToSend = new FormData();
-      
-      // Add form fields
-      formDataToSend.append('firstName', formData.firstName);
-      formDataToSend.append('lastName', formData.lastName);
-      formDataToSend.append('age', formData.age);
-      formDataToSend.append('gender', formData.gender);
-      formDataToSend.append('interestedIn', formData.interestedIn);
-      formDataToSend.append('city', formData.city);
-      formDataToSend.append('lookingFor', formData.lookingFor);
-      formDataToSend.append('relationshipStatus', formData.relationshipStatus);
-      formDataToSend.append('email', formData.email);
-      
-      // NEW: Send clean phone number (digits only) with country code
-      const cleanPhone = formData.phone ? formData.phone.replace(/\D/g, '') : '';
-      const fullPhone = cleanPhone ? `${selectedCountryCode}${cleanPhone}` : '';
-      formDataToSend.append('phone', fullPhone);
-      
-      // Implement profile picture priority logic
-      if (formData.profilePicture && formData.profilePicture instanceof File) {
-        formDataToSend.append('profilePicture', formData.profilePicture);
-        formDataToSend.append('profilePictureSource', 'uploaded');
-      } else if (formData.profilePictureFromGoogle) {
-        formDataToSend.append('profilePictureFromGoogle', formData.profilePictureFromGoogle);
-        formDataToSend.append('profilePictureSource', 'google');
-      } else {
-        formDataToSend.append('profilePictureSource', 'none');
-      }
-
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/register`, {
-        method: 'POST',
-        body: formDataToSend,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        
-        // Check for duplicate email specifically
-        if (response.status === 409 && errorData.message === 'An account with this email already exists') {
-          // Show specific duplicate email error inline
-          setErrors({ email: 'An account with this email already exists. Please use a different email or try signing in.' });
-          setStep(5); // Go back to email step so user can see the error
-          return; // Don't throw error, just return
-        }
-        
-        // For all other errors, throw to trigger generic modal
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      // CRITICAL: Call onComplete IMMEDIATELY with result
-      if (onComplete) {
-        onComplete(formData, result);
-      }
-      
-      // Show success message
-      setShowWelcomeMessage(true);
-      
-      setTimeout(() => {
-        setShowWelcomeMessage(false);
-      }, 3000);
-      
-    } catch (error) {
-      console.error('Registration failed:', error);
-      // Show the global error modal for all non-duplicate-email errors
-      setShowServerError(true);
-    } finally {
-      setIsSubmitting(false);
+  try {
+    setIsSubmitting(true);
+    
+    const formDataToSend = new FormData();
+    
+    // Add form fields
+    formDataToSend.append('firstName', formData.firstName);
+    formDataToSend.append('lastName', formData.lastName);
+    formDataToSend.append('age', formData.age);
+    formDataToSend.append('gender', formData.gender);
+    formDataToSend.append('interestedIn', formData.interestedIn);
+    formDataToSend.append('city', formData.city);
+    formDataToSend.append('lookingFor', formData.lookingFor);
+    formDataToSend.append('relationshipStatus', formData.relationshipStatus);
+    formDataToSend.append('email', formData.email);
+    
+    // Send clean phone number (digits only) with country code
+    const cleanPhone = formData.phone ? formData.phone.replace(/\D/g, '') : '';
+    const fullPhone = cleanPhone ? `${selectedCountryCode}${cleanPhone}` : '';
+    formDataToSend.append('phone', fullPhone);
+    
+    // Implement profile picture priority logic
+    if (formData.profilePicture && formData.profilePicture instanceof File) {
+      formDataToSend.append('profilePicture', formData.profilePicture);
+      formDataToSend.append('profilePictureSource', 'uploaded');
+    } else if (formData.profilePictureFromGoogle) {
+      formDataToSend.append('profilePictureFromGoogle', formData.profilePictureFromGoogle);
+      formDataToSend.append('profilePictureSource', 'google');
+    } else {
+      formDataToSend.append('profilePictureSource', 'none');
     }
-  };
 
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/register`, {
+      method: 'POST',
+      body: formDataToSend,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      
+      // Check for duplicate email specifically
+      if (response.status === 409 && errorData.message === 'An account with this email already exists') {
+        setErrors({ email: 'An account with this email already exists. Please use a different email or try signing in.' });
+        setStep(5);
+        return;
+      }
+      
+      // Check for duplicate phone specifically
+      if (response.status === 409 && errorData.message === 'An account with this phone number already exists') {
+        setErrors({ phone: 'An account with this phone number already exists. Please use a different phone number.' });
+        setStep(6);
+        return;
+      }
+      
+      // For all other errors, throw to trigger generic modal
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    // CRITICAL: Call onComplete IMMEDIATELY with result
+    if (onComplete) {
+      onComplete(formData, result);
+    }
+    
+    // Show success message
+    setShowWelcomeMessage(true);
+    
+    setTimeout(() => {
+      setShowWelcomeMessage(false);
+    }, 3000);
+    
+  } catch (error) {
+    console.error('Registration failed:', error);
+    // Show the global error modal for all non-duplicate-email/phone errors
+    setShowServerError(true);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+  
   const handleErrorOkClick = () => {
     setShowServerError(false);
     // Navigate to landing page
