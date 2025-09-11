@@ -171,6 +171,9 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const googleButtonRef = useRef(null);
   const [showServerError, setShowServerError] = useState(false);
+  
+  // NEW: Country code state for phone validation
+  const [selectedCountryCode, setSelectedCountryCode] = useState('+91');
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -189,6 +192,79 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
   });
 
   const [errors, setErrors] = useState({});
+
+  // NEW: Phone validation helper function
+  const validatePhoneNumber = (phone, countryCode) => {
+    if (!phone || phone.trim() === '') {
+      return { isValid: true, error: '' }; // Optional field
+    }
+
+    // Remove all non-numeric characters
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    // Country-specific validation rules
+    const phoneRules = {
+      '+91': { length: 10, name: 'India' },      // India: 10 digits
+      '+1': { length: 10, name: 'US' },          // US: 10 digits  
+      '+44': { minLength: 10, maxLength: 11, name: 'UK' }, // UK: 10-11 digits
+      '+61': { length: 9, name: 'Australia' }    // Australia: 9 digits
+    };
+
+    const rule = phoneRules[countryCode];
+    if (!rule) {
+      return { isValid: false, error: 'Unsupported country code' };
+    }
+
+    // Check length based on country
+    if (rule.length) {
+      if (cleanPhone.length !== rule.length) {
+        return { 
+          isValid: false, 
+          error: `Please enter a valid ${rule.length}-digit phone number for ${rule.name}` 
+        };
+      }
+    } else if (rule.minLength && rule.maxLength) {
+      if (cleanPhone.length < rule.minLength || cleanPhone.length > rule.maxLength) {
+        return { 
+          isValid: false, 
+          error: `Please enter a valid ${rule.minLength}-${rule.maxLength} digit phone number for ${rule.name}` 
+        };
+      }
+    }
+
+    return { isValid: true, error: '' };
+  };
+
+  // NEW: Format phone number for display
+  const formatPhoneNumber = (phone, countryCode) => {
+    if (!phone) return '';
+    
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    // Format based on country
+    switch (countryCode) {
+      case '+91': // India: XXXXX XXXXX
+        if (cleanPhone.length <= 5) return cleanPhone;
+        return `${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5, 10)}`;
+      
+      case '+1': // US: (XXX) XXX-XXXX
+        if (cleanPhone.length <= 3) return cleanPhone;
+        if (cleanPhone.length <= 6) return `(${cleanPhone.slice(0, 3)}) ${cleanPhone.slice(3)}`;
+        return `(${cleanPhone.slice(0, 3)}) ${cleanPhone.slice(3, 6)}-${cleanPhone.slice(6, 10)}`;
+      
+      case '+44': // UK: XXXX XXX XXXX
+        if (cleanPhone.length <= 4) return cleanPhone;
+        if (cleanPhone.length <= 7) return `${cleanPhone.slice(0, 4)} ${cleanPhone.slice(4)}`;
+        return `${cleanPhone.slice(0, 4)} ${cleanPhone.slice(4, 7)} ${cleanPhone.slice(7)}`;
+      
+      case '+61': // Australia: XXXX XXXXX
+        if (cleanPhone.length <= 4) return cleanPhone;
+        return `${cleanPhone.slice(0, 4)} ${cleanPhone.slice(4, 9)}`;
+      
+      default:
+        return cleanPhone;
+    }
+  };
 
   // Handle window resize for mobile detection
   useEffect(() => {
@@ -232,7 +308,6 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
 
   console.log('Total cities:', majorCities.length, 'Filtered cities:', filteredCities.length, 'Search term:', citySearchTerm);
 
-
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setErrors(prev => {
@@ -244,6 +319,26 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
       return prev;
     });
   }, []);
+
+  // NEW: Handle phone number changes with formatting
+  const handlePhoneChange = (value) => {
+    // Format the phone number for display
+    const formattedPhone = formatPhoneNumber(value, selectedCountryCode);
+    updateField('phone', formattedPhone);
+  };
+
+  // NEW: Handle country code change
+  const handleCountryCodeChange = (newCountryCode) => {
+    setSelectedCountryCode(newCountryCode);
+    // Clear phone validation errors when country changes
+    if (errors.phone) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.phone;
+        return newErrors;
+      });
+    }
+  };
 
   // Google Sign-In Handler
   const handleGoogleSignIn = useCallback((response) => {
@@ -270,7 +365,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
             
     } catch (error) {
       console.error('Error processing Google sign-in:', error);
-      console.error('❌ There was an error signing in with Google. Please try again.');
+      console.error('There was an error signing in with Google. Please try again.');
     }
   }, [formData.firstName, formData.lastName, formData.profilePicture, updateField]);
 
@@ -397,6 +492,11 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
         }
         break;
       case 6:
+        // NEW: Phone validation for step 6
+        const phoneValidation = validatePhoneNumber(formData.phone, selectedCountryCode);
+        if (!phoneValidation.isValid) {
+          newErrors.phone = phoneValidation.error;
+        }
         break;
       default:
         break;
@@ -417,76 +517,81 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
   };
 
   const handleSubmit = async () => {
-  try {
-    setIsSubmitting(true);
-    
-    const formDataToSend = new FormData();
-    
-    // Add form fields
-    formDataToSend.append('firstName', formData.firstName);
-    formDataToSend.append('lastName', formData.lastName);
-    formDataToSend.append('age', formData.age);
-    formDataToSend.append('gender', formData.gender);
-    formDataToSend.append('interestedIn', formData.interestedIn);
-    formDataToSend.append('city', formData.city);
-    formDataToSend.append('lookingFor', formData.lookingFor);
-    formDataToSend.append('relationshipStatus', formData.relationshipStatus);
-    formDataToSend.append('email', formData.email);
-    formDataToSend.append('phone', formData.phone || '');
-    
-    // Implement profile picture priority logic
-    if (formData.profilePicture && formData.profilePicture instanceof File) {
-      formDataToSend.append('profilePicture', formData.profilePicture);
-      formDataToSend.append('profilePictureSource', 'uploaded');
-    } else if (formData.profilePictureFromGoogle) {
-      formDataToSend.append('profilePictureFromGoogle', formData.profilePictureFromGoogle);
-      formDataToSend.append('profilePictureSource', 'google');
-    } else {
-      formDataToSend.append('profilePictureSource', 'none');
-    }
-
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/register`, {
-      method: 'POST',
-      body: formDataToSend,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
+    try {
+      setIsSubmitting(true);
       
-      // Check for duplicate email specifically
-      if (response.status === 409 && errorData.message === 'An account with this email already exists') {
-        // Show specific duplicate email error inline
-        setErrors({ email: 'An account with this email already exists. Please use a different email or try signing in.' });
-        setStep(5); // Go back to email step so user can see the error
-        return; // Don't throw error, just return
+      const formDataToSend = new FormData();
+      
+      // Add form fields
+      formDataToSend.append('firstName', formData.firstName);
+      formDataToSend.append('lastName', formData.lastName);
+      formDataToSend.append('age', formData.age);
+      formDataToSend.append('gender', formData.gender);
+      formDataToSend.append('interestedIn', formData.interestedIn);
+      formDataToSend.append('city', formData.city);
+      formDataToSend.append('lookingFor', formData.lookingFor);
+      formDataToSend.append('relationshipStatus', formData.relationshipStatus);
+      formDataToSend.append('email', formData.email);
+      
+      // NEW: Send clean phone number (digits only) with country code
+      const cleanPhone = formData.phone ? formData.phone.replace(/\D/g, '') : '';
+      const fullPhone = cleanPhone ? `${selectedCountryCode}${cleanPhone}` : '';
+      formDataToSend.append('phone', fullPhone);
+      
+      // Implement profile picture priority logic
+      if (formData.profilePicture && formData.profilePicture instanceof File) {
+        formDataToSend.append('profilePicture', formData.profilePicture);
+        formDataToSend.append('profilePictureSource', 'uploaded');
+      } else if (formData.profilePictureFromGoogle) {
+        formDataToSend.append('profilePictureFromGoogle', formData.profilePictureFromGoogle);
+        formDataToSend.append('profilePictureSource', 'google');
+      } else {
+        formDataToSend.append('profilePictureSource', 'none');
+      }
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/register`, {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        
+        // Check for duplicate email specifically
+        if (response.status === 409 && errorData.message === 'An account with this email already exists') {
+          // Show specific duplicate email error inline
+          setErrors({ email: 'An account with this email already exists. Please use a different email or try signing in.' });
+          setStep(5); // Go back to email step so user can see the error
+          return; // Don't throw error, just return
+        }
+        
+        // For all other errors, throw to trigger generic modal
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // CRITICAL: Call onComplete IMMEDIATELY with result
+      if (onComplete) {
+        onComplete(formData, result);
       }
       
-      // For all other errors, throw to trigger generic modal
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      // Show success message
+      setShowWelcomeMessage(true);
+      
+      setTimeout(() => {
+        setShowWelcomeMessage(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Registration failed:', error);
+      // Show the global error modal for all non-duplicate-email errors
+      setShowServerError(true);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-    const result = await response.json();
-    
-    // CRITICAL: Call onComplete IMMEDIATELY with result
-    if (onComplete) {
-      onComplete(formData, result);
-    }
-    
-    // Show success message
-    setShowWelcomeMessage(true);
-    
-    setTimeout(() => {
-      setShowWelcomeMessage(false);
-    }, 3000);
-    
-  } catch (error) {
-    console.error('Registration failed:', error);
-    // Show the global error modal for all non-duplicate-email errors
-    setShowServerError(true);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
   const handleErrorOkClick = () => {
     setShowServerError(false);
     // Navigate to landing page
@@ -525,7 +630,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
       case 1:
         return (
           <div className="form-step">
-            <h2 className="step-title">Let's start with the basics! ✨</h2>
+            <h2 className="step-title">Let's start with the basics!</h2>
             
             <div className="form-group">
               <label>Profile Picture (Optional)</label>
@@ -552,7 +657,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
               </div>
               {errors.profilePicture && <span className="error-text">{errors.profilePicture}</span>}
               <small className="helper-text profile-helper">
-                💡 While not required, adding a photo significantly increases your chances of making meaningful connections!
+                While not required, adding a photo significantly increases your chances of making meaningful connections!
               </small>
             </div>
 
@@ -597,7 +702,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
       case 2:
         return (
           <div className="form-step">
-            <h2 className="step-title">Tell us about yourself 🌟</h2>
+            <h2 className="step-title">Tell us about yourself</h2>
             <div className="form-group">
               <label>I identify as</label>
               <div className="option-grid">
@@ -636,7 +741,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
       case 3:
         return (
           <div className="form-step">
-            <h2 className="step-title">Where are you located? 📍</h2>
+            <h2 className="step-title">Where are you located?</h2>
             <div className="form-group">
               <label>Your city</label>
               <div className="city-input-container">
@@ -694,7 +799,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
                     className={`option-button ${formData.lookingFor === option ? 'selected' : ''}`}
                     onClick={() => updateField('lookingFor', option)}
                   >
-                    {option === 'Dating/Relationships' ? '💕 Dating' : option === 'Friendship' ? '👥 Friends' : '🌟 Both'}
+                    {option === 'Dating/Relationships' ? 'Dating' : option === 'Friendship' ? 'Friends' : 'Both'}
                     <br />
                     <small>{option}</small>
                   </button>
@@ -708,7 +813,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
       case 4:
         return (
           <div className="form-step">
-            <h2 className="step-title">What's your current situation? 💭</h2>
+            <h2 className="step-title">What's your current situation?</h2>
             <div className="form-group">
               <label>Relationship status</label>
               <div className="option-grid single-column">
@@ -737,7 +842,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
       case 5:
         return (
           <div className="form-step">
-            <h2 className="step-title">Almost there! 📧</h2>
+            <h2 className="step-title">Almost there!</h2>
             <p className="step-subtitle">We need your email to send you amazing matches</p>
             
             <div className="form-group">
@@ -774,28 +879,32 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
       case 6:
         return (
           <div className="form-step">
-            <h2 className="step-title">Last step! 📱</h2>
+            <h2 className="step-title">Last step!</h2>
             <p className="step-subtitle">Adding your phone number helps us provide better matches (optional)</p>
             <div className="form-group">
               <label>Phone number (Optional)</label>
               <div className="phone-input-container">
-                <select className="country-select">
-                  <option value="+91">🇮🇳 +91</option>
-                  <option value="+1">🇺🇸 +1</option>
-                  <option value="+44">🇬🇧 +44</option>
-                  <option value="+61">🇦🇺 +61</option>
+                <select 
+                  className="country-select"
+                  value={selectedCountryCode}
+                  onChange={(e) => handleCountryCodeChange(e.target.value)}
+                >
+                  <option value="+91">India +91</option>
+                  <option value="+1">US +1</option>
+                  <option value="+44">UK +44</option>
+                  <option value="+61">Australia +61</option>
                 </select>
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => updateField('phone', e.target.value)}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
                   placeholder="Enter phone number"
                   className={errors.phone ? 'error' : ''}
                 />
               </div>
               {errors.phone && <span className="error-text">{errors.phone}</span>}
               <small className="helper-text">
-                💡 This helps us provide better recommendations and keep the community safe
+                This helps us provide better recommendations and keep the community safe
               </small>
             </div>
           </div>
@@ -863,7 +972,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
               </>
             ) : (
               <>
-                {step === 6 ? 'Complete Setup ✨' : 'Continue'}
+                {step === 6 ? 'Complete Setup' : 'Continue'}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4 13h12.17l-5.59 5.59L12 20l8-8-8-8-1.41 1.41L16.17 11H4v2z"/>
                 </svg>
@@ -899,7 +1008,7 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3>We're sad to see you go! 😢</h3>
+              <h3>We're sad to see you go!</h3>
             </div>
             <div className="modal-body">
               <p>Your progress will be lost if you leave now. Come back anytime when you're ready to find amazing connections!</p>
@@ -924,5 +1033,4 @@ const BasicInfoForm = ({ onComplete, onBack, onClose }) => {
     </div>
   );
 };
-
-export default BasicInfoForm;
+export default BasicInfoFor
